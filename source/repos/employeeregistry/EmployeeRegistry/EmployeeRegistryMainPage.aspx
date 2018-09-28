@@ -76,7 +76,7 @@
         <asp:Button ID="btnSubmitNew" Text="Submit" runat="server" ValidationGroup="main" OnClick="btnSubmitNew_Click" />
         <br />
         <h3>Search for an Employee by Phone Number or Last Name</h3>
-        <asp:TextBox ID="txtSearch" MaxLength="50" runat="server"></asp:TextBox><asp:Button ID="btnSearch" ValidationGroup="search" runat="server" Text="Search" OnClick="btnSearch_Click"/><asp:Button ID="btnReset" Text="Reset" runat="server" OnClick="btnReset_Click" />
+        <asp:TextBox ID="txtSearch" MaxLength="50" runat="server"></asp:TextBox><asp:Button ID="btnSearch" ValidationGroup="search" runat="server" Text="Search" OnClick="btnSearch_Click" /><asp:Button ID="btnReset" Text="Reset" runat="server" OnClick="btnReset_Click" />
         <asp:RequiredFieldValidator ID="reqValSearch"
             ControlToValidate="txtSearch" runat="server"
             ErrorMessage="Please Enter A Search Query"

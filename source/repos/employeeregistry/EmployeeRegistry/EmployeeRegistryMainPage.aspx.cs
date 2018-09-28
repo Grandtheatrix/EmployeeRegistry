@@ -15,6 +15,8 @@ namespace EmployeeRegistry
     {
         string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
+        //EVENTS
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Page.IsPostBack)
@@ -28,13 +30,23 @@ namespace EmployeeRegistry
             var newEmployee = new EmployeeCreateRequest();
             newEmployee.FirstName = txtFirstName.Text;
             newEmployee.LastName = txtLastName.Text;
-            newEmployee.PhoneNumber = "(" + txtPhoneNumber.Text.Substring(0,3) + ") " + txtPhoneNumber.Text.Substring(3, 3) + "-" + txtPhoneNumber.Text.Substring(6, 4);
+            newEmployee.PhoneNumber = "(" + txtPhoneNumber.Text.Substring(0, 3) + ") " + txtPhoneNumber.Text.Substring(3, 3) + "-" + txtPhoneNumber.Text.Substring(6, 4);
             newEmployee.Zipcode = txtZipcode.Text;
             newEmployee.HireDate = txtHireDate.Text;
             int newId = CreateEmployee(newEmployee);
             GetAllEmployees();
             ClearTextBoxes(Page);
         }
+
+        protected void btnSearch_Click(object sender, EventArgs e)
+        {
+            var req = new QueryRequest();
+            req.Query = txtSearch.Text;
+            SearchEmployees(req);
+        }
+
+        //UTILITIES
+
         protected void ClearTextBoxes(Control p1)
         {
             foreach (Control ctrl in p1.Controls)
@@ -57,6 +69,29 @@ namespace EmployeeRegistry
                 }
             }
         }
+
+        protected void rpt_ItemDataBound(object sender, RepeaterItemEventArgs e)
+        {
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                Label lblId = (Label)e.Item.FindControl("lblId");
+                lblId.Text = ((EmployeeGetRequest)e.Item.DataItem).Id.ToString();
+
+                Label lblFirstName = (Label)e.Item.FindControl("lblFirstName");
+                lblFirstName.Text = ((EmployeeGetRequest)e.Item.DataItem).FirstName;
+
+                Label lblLastName = (Label)e.Item.FindControl("lblLastName");
+                lblLastName.Text = ((EmployeeGetRequest)e.Item.DataItem).LastName;
+
+                Label lblPhoneNumber = (Label)e.Item.FindControl("lblPhoneNumber");
+                lblPhoneNumber.Text = ((EmployeeGetRequest)e.Item.DataItem).PhoneNumber;
+
+                Label lblHireDate = (Label)e.Item.FindControl("lblHireDate");
+                lblHireDate.Text = ((EmployeeGetRequest)e.Item.DataItem).HireDate;
+            }
+        }
+
+        //MAIN METHODS
 
         public int CreateEmployee(EmployeeCreateRequest req)
         {
@@ -87,29 +122,9 @@ namespace EmployeeRegistry
                 }
             }
         }
-        protected void rpt_ItemDataBound(object sender, RepeaterItemEventArgs e)
-        {
-            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
-            {
-                Label lblId = (Label)e.Item.FindControl("lblId");
-                lblId.Text = ((EmployeeGetRequest)e.Item.DataItem).Id.ToString();
 
-                Label lblFirstName = (Label)e.Item.FindControl("lblFirstName");
-                lblFirstName.Text = ((EmployeeGetRequest)e.Item.DataItem).FirstName;
-
-                Label lblLastName = (Label)e.Item.FindControl("lblLastName");
-                lblLastName.Text = ((EmployeeGetRequest)e.Item.DataItem).LastName;
-
-                Label lblPhoneNumber = (Label)e.Item.FindControl("lblPhoneNumber");
-                lblPhoneNumber.Text = ((EmployeeGetRequest)e.Item.DataItem).PhoneNumber;
-
-                Label lblHireDate = (Label)e.Item.FindControl("lblHireDate");
-                lblHireDate.Text = ((EmployeeGetRequest)e.Item.DataItem).HireDate ;
-            }
-        }
         public void GetAllEmployees()
         {
-
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
@@ -143,16 +158,8 @@ namespace EmployeeRegistry
             }
         }
 
-        protected void btnSearch_Click(object sender, EventArgs e)
-        {
-            var req = new QueryRequest();
-            req.Query = txtSearch.Text;
-            SearchEmployees(req);
-
-        }
         public void SearchEmployees(QueryRequest req)
         {
-
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
@@ -180,17 +187,12 @@ namespace EmployeeRegistry
 
                         employees.Add(employee);
                     };
-                   
+
                     rpt.DataSource = employees;
                     rpt.DataBind();
 
                 }
             }
-        }
-
-        protected void btnReset_Click(object sender, EventArgs e)
-        {
-            GetAllEmployees();
         }
     }
 }
